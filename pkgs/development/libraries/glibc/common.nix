@@ -35,9 +35,10 @@
 } @ args:
 
 let
-  version = "2.27";
+  version = "2.23";
   patchSuffix = "";
-  sha256 = "0wpwq7gsm7sd6ysidv0z575ckqdg13cr2njyfgrbgh4f65adwwji";
+  sha256 = "94efeb00e4603c8546209cefb3e1a50a5315c86fa9b078b6fad758e187ce13e9";
+
 in
 
 assert withLinuxHeaders -> linuxHeaders != null;
@@ -50,10 +51,8 @@ stdenv.mkDerivation ({
   inherit (stdenv) is64bit;
 
   enableParallelBuilding = true;
-
   patches =
-    [
-      /* Have rpcgen(1) look for cpp(1) in $PATH.  */
+    [ /* Have rpcgen(1) look for cpp(1) in $PATH.  */
       ./rpcgen-path.patch
 
       /* Allow NixOS and Nix to handle the locale-archive. */
@@ -65,43 +64,51 @@ stdenv.mkDerivation ({
       /* Don't use /etc/ld.so.preload, but /etc/ld-nix.so.preload.  */
       ./dont-use-system-ld-so-preload.patch
 
+      /* Add blowfish password hashing support.  This is needed for
+         compatibility with old NixOS installations (since NixOS used
+         to default to blowfish). */
+      ./glibc-crypt-blowfish.patch
+
       /* The command "getconf CS_PATH" returns the default search path
          "/bin:/usr/bin", which is inappropriate on NixOS machines. This
          patch extends the search path by "/run/current-system/sw/bin". */
       ./fix_path_attribute_in_getconf.patch
 
-      /* Allow running with RHEL 6 -like kernels.  The patch adds an exception
-        for glibc to accept 2.6.32 and to tag the ELFs as 2.6.32-compatible
-        (otherwise the loader would refuse libc).
-        Note that glibc will fully work only on their heavily patched kernels
-        and we lose early mismatch detection on 2.6.32.
-
-        On major glibc updates we should check that the patched kernel supports
-        all the required features.  ATM it's verified up to glibc-2.26-131.
-        # HOWTO: check glibc sources for changes in kernel requirements
-        git log -p glibc-2.25.. sysdeps/unix/sysv/linux/x86_64/kernel-features.h sysdeps/unix/sysv/linux/kernel-features.h
-        # get kernel sources (update the URL)
-        mkdir tmp && cd tmp
-        curl http://vault.centos.org/6.9/os/Source/SPackages/kernel-2.6.32-696.el6.src.rpm | rpm2cpio - | cpio -idmv
-        tar xf linux-*.bz2
-        # check syscall presence, for example
-        less linux-*?/arch/x86/kernel/syscall_table_32.S
-       */
-      ./allow-kernel-2.6.32.patch
-    ]
-    ++ lib.optional stdenv.isx86_64 ./fix-x64-abi.patch
-    ++ lib.optional stdenv.hostPlatform.isMusl ./fix-rpc-types-musl-conflicts.patch;
+      ./cve-2016-3075.patch
+      ./glob-simplify-interface.patch
+      ./cve-2016-1234.patch
+      ./cve-2016-3706.patch
+      ./fix_warnings.patch
+      ./locwrongaddress.patch
+    ];
 
   postPatch =
+    # Needed for glibc to build with the gnumake 3.82
+    # http://comments.gmane.org/gmane.linux.lfs.support/31227
     ''
-      # Needed for glibc to build with the gnumake 3.82
-      # http://comments.gmane.org/gmane.linux.lfs.support/31227
       sed -i 's/ot \$/ot:\n\ttouch $@\n$/' manual/Makefile
-
-      # nscd needs libgcc, and we don't want it dynamically linked
-      # because we don't want it to depend on bootstrap-tools libs.
+    ''
+    # nscd needs libgcc, and we don't want it dynamically linked
+    # because we don't want it to depend on bootstrap-tools libs.
+    + ''
       echo "LDFLAGS-nscd += -static-libgcc" >> nscd/Makefile
+    ''
+    # Replace the date and time in nscd by a prefix of $out.
+    # It is used as a protocol compatibility check.
+    # Note: the size of the struct changes, but using only a part
+    # would break hash-rewriting. When receiving stats it does check
+    # that the struct sizes match and can't cause overflow or something.
+    + ''
+      cat ${./glibc-remove-datetime-from-nscd.patch} \
+        | sed "s,@out@,$out," | patch -p1
+    ''
+    # CVE-2014-8121, see https://bugzilla.redhat.com/show_bug.cgi?id=1165192
+    + ''
+      substituteInPlace ./nss/nss_files/files-XXX.c \
+        --replace 'status = internal_setent (stayopen);' \
+                  'status = internal_setent (1);'
     '';
+
 
   configureFlags =
     [ "-C"
