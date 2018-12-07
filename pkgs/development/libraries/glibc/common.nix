@@ -80,6 +80,7 @@ stdenv.mkDerivation ({
       ./cve-2016-3706.patch
       ./fix_warnings.patch
       ./locwrongaddress.patch
+      ./epow_boolean_comparison.patch
     ];
 
   postPatch =
@@ -112,6 +113,7 @@ stdenv.mkDerivation ({
 
   configureFlags =
     [ "-C"
+      "--disable-werror"
       "--enable-add-ons"
       "--enable-obsolete-nsl"
       "--enable-obsolete-rpc"
