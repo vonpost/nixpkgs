@@ -2464,6 +2464,11 @@
     github = "listx";
     name = "Linus Arver";
   };
+  lionello = {
+    email = "lio@lunesu.com";
+    github = "lionello";
+    name = "Lionello Lunesu";
+  };
   lluchs = {
     email = "lukas.werling@gmail.com";
     github = "lluchs";
@@ -3935,6 +3940,11 @@
     github = "seppeljordan";
     name = "Sebastian Jordan";
   };
+  seqizz = {
+    email = "seqizz@gmail.com";
+    github = "seqizz";
+    name = "Gurkan Gur";
+  };
   sfrijters = {
     email = "sfrijters@gmail.com";
     github = "sfrijters";
@@ -4267,6 +4277,11 @@
     email = "kim.lindberger@gmail.com";
     github = "talyz";
     name = "Kim Lindberger";
+  };
+  taneb = {
+    email = "nvd1234@gmail.com";
+    github = "Taneb";
+    name = "Nathan van Doorn";
   };
   tari = {
     email = "peter@taricorp.net";

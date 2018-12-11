@@ -4055,7 +4055,7 @@ let
       \$(BASEEXT)\$(OBJ_EXT): \$(BASEEXT).xsi
 
       \$(BASEEXT).xsi: \$(DBI_DRIVER_XST) $autodir/Driver_xst.h
-        \$(PERL) -p -e "s/~DRIVER~/\$(BASEEXT)/g" \$(DBI_DRIVER_XST) > \$(BASEEXT).xsi
+      ''\t\$(PERL) -p -e "s/~DRIVER~/\$(BASEEXT)/g" \$(DBI_DRIVER_XST) > \$(BASEEXT).xsi
 
       # ---
       ';
@@ -8895,7 +8895,7 @@ let
     meta = with stdenv.lib; {
       description = "The World-Wide Web library for Perl";
       license = with licenses; [ artistic1 gpl1Plus ];
-      platforms = platforms.unix;
+      platforms = platforms.unix ++ platforms.windows;
     };
     buildInputs = [ TestFatal TestNeeds TestRequiresInternet ];
   };
@@ -9114,6 +9114,19 @@ let
     src = fetchurl {
       url = mirror://cpan/authors/id/P/PD/PDWARREN/Mail-RFC822-Address-0.3.tar.gz;
       sha256 = "351ef4104ecb675ecae69008243fae8243d1a7e53c681eeb759e7b781684c8a7";
+    };
+  };
+
+  MailSender = buildPerlPackage rec {
+    name = "Mail-Sender-0.903";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/C/CA/CAPOEIRAB/${name}.tar.gz";
+      sha256 = "4413eb49f520a8318151811ccb05a8d542973aada20aa503ad32f9ffc98a39bf";
+    };
+    meta = {
+      homepage = https://github.com/Perl-Email-Project/Mail-Sender;
+      description = "(DEPRECATED) module for sending mails with attachments through an SMTP server";
+      license = with stdenv.lib.licenses; [ artistic1 gpl1Plus ];
     };
   };
 

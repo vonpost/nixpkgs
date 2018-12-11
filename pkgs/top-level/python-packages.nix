@@ -554,6 +554,8 @@ in {
 
   pygame_sdl2 = callPackage ../development/python-modules/pygame_sdl2 { };
 
+  pygdbmi = callPackage ../development/python-modules/pygdbmi { };
+
   pygmo = callPackage ../development/python-modules/pygmo { };
 
   pygobject2 = callPackage ../development/python-modules/pygobject { };
@@ -633,6 +635,8 @@ in {
 
   python-binance = callPackage ../development/python-modules/python-binance { };
 
+  python-engineio = callPackage ../development/python-modules/python-engineio { };
+
   python-hosts = callPackage ../development/python-modules/python-hosts { };
 
   python-lz4 = callPackage ../development/python-modules/python-lz4 { };
@@ -659,6 +663,8 @@ in {
   python-sql = callPackage ../development/python-modules/python-sql { };
 
   python-stdnum = callPackage ../development/python-modules/python-stdnum { };
+
+  python-socketio = callPackage ../development/python-modules/python-socketio { };
 
   python-utils = callPackage ../development/python-modules/python-utils { };
 
@@ -828,6 +834,8 @@ in {
   application = callPackage ../development/python-modules/application { };
 
   appnope = callPackage ../development/python-modules/appnope { };
+
+  approvaltests = callPackage ../development/python-modules/approvaltests { };
 
   apsw = callPackage ../development/python-modules/apsw {};
 
@@ -2366,6 +2374,8 @@ in {
 
   flask-silk = callPackage ../development/python-modules/flask-silk { };
 
+  flask-socketio = callPackage ../development/python-modules/flask-socketio { };
+
   flask_sqlalchemy = callPackage ../development/python-modules/flask-sqlalchemy { };
 
   flask_testing = callPackage ../development/python-modules/flask-testing { };
@@ -2958,6 +2968,8 @@ in {
   mock = callPackage ../development/python-modules/mock { };
 
   mock-open = callPackage ../development/python-modules/mock-open { };
+
+  mockito = callPackage ../development/python-modules/mockito { };
 
   modestmaps = callPackage ../development/python-modules/modestmaps { };
 
@@ -3798,9 +3810,13 @@ in {
 
   robotframework-ride = callPackage ../development/python-modules/robotframework-ride { };
 
+  robotframework-seleniumlibrary = callPackage ../development/python-modules/robotframework-seleniumlibrary { };
+
   robotframework-selenium2library = callPackage ../development/python-modules/robotframework-selenium2library { };
 
   robotframework-tools = callPackage ../development/python-modules/robotframework-tools { };
+
+  robotstatuschecker = callPackage ../development/python-modules/robotstatuschecker { };
 
   robotsuite = callPackage ../development/python-modules/robotsuite { };
 
@@ -4291,7 +4307,9 @@ in {
     py = python.override{x11Support=true;};
   in callPackage ../development/python-modules/tkinter { py = py; };
 
-  tlslite = callPackage ../development/python-modules/tlslite { };
+  tlslite = throw "deprecated 2018-12-10; use pythonPackages.tlslite-ng instead";
+
+  tlslite-ng = callPackage ../development/python-modules/tlslite-ng { };
 
   qrcode = callPackage ../development/python-modules/qrcode { };
 
